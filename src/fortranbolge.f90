@@ -6,7 +6,7 @@ program fortranbolge
     integer(int64), parameter :: mem_size = 59049_int64, last_pos = 59048_int64
     integer(int64), parameter :: block_size = 243_int64, pow9 = 19683_int64
     integer(int64) :: a_reg, c_reg, d_reg, steps, max_steps, input_pos
-    integer(int64) :: fill_start, chain_until, out_len, n_cells
+    integer(int64) :: fill_start, chain_until, out_len, n_cells, in_len
     integer(int64), allocatable :: overlay(:), chain(:), cells(:), input_data(:), output_data(:)
     logical, allocatable :: present(:)
     character(len=1024) :: program_path, arg
@@ -23,6 +23,9 @@ program fortranbolge
         end subroutine fb_putc
         subroutine fb_flush() bind(C, name="fb_flush")
         end subroutine fb_flush
+        integer(c_int) function fb_getc() bind(C, name="fb_getc")
+            import c_int
+        end function fb_getc
     end interface
 
     argc = command_argument_count()
@@ -76,12 +79,15 @@ program fortranbolge
     fill_start = max(2_int64, n_cells); chain_until = fill_start
     a_reg = 0; c_reg = 0; d_reg = 0; steps = 0; input_pos = 0; out_len = 0
     allocate(input_data(1000000), output_data(65536)); input_data = 0; output_data = 0
-    do i = 1, size(input_data)
-        read(5, iostat=ios) input_data(i)
-        if (ios /= 0) exit
-        input_data(i) = iand(input_data(i), 255_int64)
+    input_pos = 0
+    i = 0
+    do while (i < size(input_data))
+        arg_status = fb_getc()
+        if (arg_status < 0) exit
+        i = i + 1
+        input_data(i) = int(arg_status, int64)
     end do
-    input_pos = i - 1
+    in_len = i
     halted = .false.; halt_reason = 'StepsExhausted'
 
     do while (.not. halted .and. steps < max_steps)
@@ -190,7 +196,7 @@ contains
                 out_len=out_len+1; output_data(out_len)=mod(a_reg,256_int64)
             end if
         case(23)
-            if (input_pos >= i-1) then
+            if (input_pos >= in_len) then
                 halted=.true.; halt_reason='Eof'; return
             end if
             input_pos=input_pos+1; a_reg=input_data(input_pos)
