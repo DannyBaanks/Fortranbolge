@@ -33,11 +33,20 @@ stderr: {"final":{"a":19758,"c":85,"d":63},"halt_reason":"VInstruction","output_
 This demonstrates `Hello, world.`, 48 executed steps, and the canonical final
 register values.
 
+## Unshackled 3^19
+
+`src/fortranbolge19.f90` now contains the complete local 3^19 runtime,
+including lazy memory, base-9 crazy, third rotation, region offsets, XLAT and
+EOF=`END-1`. The minimum `ubO`/`Z` execution gate passes; broad differential
+corpus coverage remains pending.
+
 ## Demonstrated / pending
 
 | Capability | Status |
 |---|---|
 | Classic execution core | DEMONSTRATED |
+| Unshackled 3^19 positional codec | DEMONSTRATED |
+| Unshackled 3^19 execution gate | DEMONSTRATED |
 | Byte-oriented stdout framing | DEMONSTRATED |
 | Canonical 48-step gate | DEMONSTRATED |
 | Compact JSON report | DEMONSTRATED |
