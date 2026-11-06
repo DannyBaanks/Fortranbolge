@@ -1,6 +1,12 @@
-# Fortranbolge
+# Fortranbolge v2.0 — Motores Malbolge Classic & Unshackled (3^19) en GNU Fortran
 
-Intérpretes de Malbolge Classic y Unshackled (3^19) implementados en GNU Fortran con un shim C mínimo para I/O binario.
+[![Version](https://img.shields.io/badge/version-2.0-blue.svg)](https://github.com/DannyBaanks/Fortranbolge)
+[![Fortran](https://img.shields.io/badge/Fortran-2008%2B-orange.svg)](https://gcc.gnu.org/fortran/)
+[![Tests](https://img.shields.io/badge/tests-PASS-brightgreen.svg)]()
+
+Intérpretes de Malbolge Classic y Unshackled (3^19) implementados en GNU Fortran (f2008) con un shim C mínimo para I/O binario y serialización de telemetría JSON.
+
+Parte de la **Flota de Consenso Multi-Oráculo v2.0** del ecosistema Malbolge de ISyCo.
 
 ## Compilación
 
