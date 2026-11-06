@@ -1,64 +1,50 @@
-# Fortranbolge 1.0-gate
+# Fortranbolge
 
-Intérprete independiente de Classic Malbolge implementado en GNU Fortran,
-con un shim C mínimo para I/O de bytes. Esta versión está verificada contra el
-gate Classic; no se presenta todavía como paridad completa con
-MalbolgeEngineCPP.
+Intérpretes de Malbolge Classic y Unshackled (3^19) implementados en GNU Fortran con un shim C mínimo para I/O binario.
 
-## Build
+## Compilación
+
+### Linux (gfortran + gcc)
+
+```bash
+gfortran -O2 -std=f2008 -o fortranbolge src/fortranbolge.f90 c/io_shim.c
+gfortran -O2 -std=f2008 -o fortranbolge19 src/fortranbolge19.f90 c/io_shim.c
+```
+
+### Windows (MSYS2)
 
 ```powershell
 gfortran -O2 -std=f2008 -o fortranbolge.exe src\fortranbolge.f90 c\io_shim.c
+gfortran -O2 -std=f2008 -o fortranbolge19.exe src\fortranbolge19.f90 c\io_shim.c
 ```
 
-## Run
+## Ejecución
 
-```powershell
-cmd /c "type nul | fortranbolge.exe fixture.mal 100 1>out.bin 2>report.txt"
+### Classic (59,049 celdas)
+
+```bash
+./fortranbolge fixture.mal 100 < /dev/null
 ```
 
-The program reads a Malbolge source file and an optional maximum step count.
-Program output is raw bytes on stdout with one framing LF; the machine report
-is compact JSON on stderr.
-
-## Verified gate
-
-Observed result from `fixture.mal`:
-
+Salida esperada:
 ```text
-stdout: 48 65 6c 6c 6f 2c 20 77 6f 72 6c 64 2e 0a
+stdout: Hello, world.
 stderr: {"final":{"a":19758,"c":85,"d":63},"halt_reason":"VInstruction","output_len":13,"status":"HALTED","steps":48}
 ```
 
-This demonstrates `Hello, world.`, 48 executed steps, and the canonical final
-register values.
+### Unshackled (3^19 celdas)
 
-## Unshackled 3^19
+```bash
+./fortranbolge19 fixture19.mal 10 < /dev/null
+```
 
-`src/fortranbolge19.f90` now contains the complete local 3^19 runtime,
-including lazy memory, base-9 crazy, third rotation, region offsets, XLAT and
-EOF=`END-1`. The minimum `ubO`/`Z` execution gate passes; broad differential
-corpus coverage remains pending.
+Salida:
+```json
+{"final":{"a":1162261466,"c":2,"d":2},"halt_reason":"HaltOpcode","status":"HALTED","steps":3,"materialized_chain":0}
+```
 
-## Demonstrated / pending
+## Pruebas automatizadas
 
-| Capability | Status |
-|---|---|
-| Classic execution core | DEMONSTRATED |
-| Unshackled 3^19 positional codec | DEMONSTRATED |
-| Unshackled 3^19 execution gate | DEMONSTRATED |
-| Byte-oriented stdout framing | DEMONSTRATED |
-| Canonical 48-step gate | DEMONSTRATED |
-| Compact JSON report | DEMONSTRATED |
-| Snapshots and resume | NOT_IMPLEMENTED |
-| Instruction tracing | NOT_IMPLEMENTED |
-| Embeddable library API | NOT_IMPLEMENTED |
-| Broad differential corpus | NOT_DEMONSTRATED |
-| Fuzzing and benchmarks | NOT_DEMONSTRATED |
-
-## Scope
-
-`1.0-gate` means the verified Classic fixture and execution contract are
-working. Input-path hardening, portable Fortran aliasing cleanup, snapshots,
-tracing, fuzzing, benchmarks, and broader differential evidence remain future
-work.
+```bash
+./tests/run_tests.sh
+```
